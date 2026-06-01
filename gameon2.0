@@ -60,7 +60,7 @@ function Show-Header {
 
     Write-Host ""
     Write-Host "==================================================" -ForegroundColor Green
-    Write-Host "                 GAMEON 2.0 PREMIUM " -ForegroundColor White
+    Write-Host "                GAMEON 2.0 PREMIUM" -ForegroundColor White
     Write-Host "==================================================" -ForegroundColor Green
     Write-Host ""
 }
