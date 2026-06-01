@@ -51,19 +51,17 @@ $configDir = Join-Path $steamDir "config"
 function Show-Header {
     Clear-Host
 
-    Write-Host " ██████╗  █████╗ ███╗   ███╗███████╗ ██████╗ ███╗   ██╗" -ForegroundColor Green
-    Write-Host "██╔════╝ ██╔══██╗████╗ ████║██╔════╝██╔═══██╗████╗  ██║" -ForegroundColor Green
-    Write-Host "██║  ███╗███████║██╔████╔██║█████╗  ██║   ██║██╔██╗ ██║" -ForegroundColor White
-    Write-Host "██║   ██║██╔══██║██║╚██╔╝██║██╔══╝  ██║   ██║██║╚██╗██║" -ForegroundColor White
-    Write-Host "╚██████╔╝██║  ██║██║ ╚═╝ ██║███████╗╚██████╔╝██║ ╚████║" -ForegroundColor Green
-    Write-Host " ╚═════╝ ╚═╝  ╚═╝╚═╝     ╚═╝╚══════╝ ╚═════╝ ╚═╝  ╚═══╝" -ForegroundColor Green
+    Write-Host " ██████╗  █████╗ ███╗   ███╗███████╗ ██████╗ ███╗   ██╗ " -ForegroundColor Green
+    Write-Host "██╔════╝ ██╔══██╗████╗ ████║██╔════╝██╔═══██╗████╗  ██║ " -ForegroundColor White
+    Write-Host "██║  ███╗███████║██╔████╔██║█████╗  ██║   ██║██╔██╗ ██║ " -ForegroundColor Green
+    Write-Host "██║   ██║██╔══██║██║╚██╔╝██║██╔══╝  ██║   ██║██║╚██╗██║ " -ForegroundColor White
+    Write-Host "╚██████╔╝██║  ██║██║ ╚═╝ ██║███████╗╚██████╔╝██║ ╚████║ " -ForegroundColor Green
+    Write-Host " ╚═════╝ ╚═╝  ╚═╝╚═╝     ╚═╝╚══════╝ ╚═════╝ ╚═╝  ╚═══╝ " -ForegroundColor White
 
     Write-Host ""
-    Write-Host "██████████████████████████████████████████████████████████████████████" -ForegroundColor Green
-    Write-Host "█                                                                    █" -ForegroundColor White
-    Write-Host "█                     GAMEON SYSTEM ACTIVE                           █" -ForegroundColor White
-    Write-Host "█                                                                    █" -ForegroundColor White
-    Write-Host "██████████████████████████████████████████████████████████████████████" -ForegroundColor Green
+    Write-Host "═══════════════════════════════════════════════════════════════════════" -ForegroundColor Green
+    Write-Host "                     GAMEON SYSTEM ACTIVE" -ForegroundColor White
+    Write-Host "═══════════════════════════════════════════════════════════════════════" -ForegroundColor Green
     Write-Host ""
 }
 
