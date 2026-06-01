@@ -51,22 +51,13 @@ $configDir = Join-Path $steamDir "config"
 function Show-Header {
     Clear-Host
 
-    Write-Host "" -ForegroundColor Green
-    Write-Host "  ██████╗  █████╗ ███╗   ███╗███████╗ ██████╗ ███╗   ██╗" -ForegroundColor Green
-    Write-Host " ██╔════╝ ██╔══██╗████╗ ████║██╔════╝██╔═══██╗████╗  ██║" -ForegroundColor Green
-    Write-Host " ██║  ███╗███████║██╔████╔██║█████╗  ██║   ██║██╔██╗ ██║" -ForegroundColor White
-    Write-Host " ██║   ██║██╔══██║██║╚██╔╝██║██╔══╝  ██║   ██║██║╚██╗██║" -ForegroundColor White
-    Write-Host " ╚██████╔╝██║  ██║██║ ╚═╝ ██║███████╗╚██████╔╝██║ ╚████║" -ForegroundColor Green
-    Write-Host "  ╚═════╝ ╚═╝  ╚═╝╚═╝     ╚═╝╚══════╝ ╚═════╝ ╚═╝  ╚═══╝" -ForegroundColor Green
-
-    Write-Host ""
-    Write-Host "======================================================================" -ForegroundColor Green
-    Write-Host "                                                                      " -ForegroundColor White
-    Write-Host "                    GAMEON 2.0 - PREMIUM SYSTEM                       " -ForegroundColor White
-    Write-Host "                                                                      " -ForegroundColor White
-    Write-Host "              ATUALIZACAO • INSTALACAO • GERENCIAMENTO                " -ForegroundColor Green
-    Write-Host "                                                                      " -ForegroundColor White
-    Write-Host "======================================================================" -ForegroundColor Green
+    Write-Host "  ████████████████████████████████████████████████████████████████" -ForegroundColor Green
+    Write-Host "  █                                                          █" -ForegroundColor Green
+    Write-Host "  █                      GAMEON 2.0                          █" -ForegroundColor White
+    Write-Host "  █                                                          █" -ForegroundColor Green
+    Write-Host "  █              PREMIUM GAMING LIBRARY SYSTEM               █" -ForegroundColor White
+    Write-Host "  █                                                          █" -ForegroundColor Green
+    Write-Host "  ████████████████████████████████████████████████████████████████" -ForegroundColor Green
     Write-Host ""
 }
 
