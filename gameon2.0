@@ -94,14 +94,11 @@ function Executar-Instalacao {
     Show-Header
     $nomeArquivo = "GameON 2.0.zip"
     $urlDoZip = "https://www.dropbox.com/scl/fi/cy1xghxktlydqr5bmglql/GameON-2.0.zip?rlkey=obpw9a6rgv2wf3q88z5ed8v1t&dl=1" 
-    
-    # URL atualizada com o novo token de segurança do Dropbox (dl=1 para download direto)
-    $urlDoZip = "https://www.dropbox.com/scl/fi/3wn31xl9nhhr2mbdsicib/PlanoGod.zip?rlkey=6vjtor05vg4y5w35gl54fdmhu&st=fwcmcizr&dl=1" 
 
     # Limpeza de cache local do ZIP antigo
     if (Test-Path $nomeArquivo) { Remove-Item $nomeArquivo -Force }
 
-    Write-Host "Baixando arquivos da biblioteca (Plano God)..." -ForegroundColor Cyan
+    Write-Host "Baixando arquivos GameON2.0..." -ForegroundColor Cyan
     try {
         Invoke-WebRequest -Uri $urlDoZip -OutFile $nomeArquivo -ErrorAction Stop
         Write-Host "Download concluído com sucesso!" -ForegroundColor Green
@@ -121,21 +118,10 @@ foreach ($name in $dlls.Keys) {
         Invoke-WebRequest -Uri $dlls[$name] -OutFile (Join-Path $steamDir $name) -ErrorAction SilentlyContinue
     } catch {}
 }
-    # Downloads das DLLs direto do Dropbox
-    Write-Host "Sincronizando DLLs de sistema..." -ForegroundColor Cyan
-    $dlls = @{ 
-        "xinput1_4.dll" = "https://www.dropbox.com/scl/fi/t9myageazhyj0zbqcamlb/update?rlkey=6ulsymhfdrpeh65n4k6fu4cgv&st=nu66xrcm&dl=1"
-        "dwmapi.dll"    = "https://www.dropbox.com/scl/fi/ry3nm7ywgdgrdzduye8w0/dwmapi?rlkey=yrdi65cmcv78g5qibgjfprpll&st=kbx6rd56&dl=1" 
-    }
-    foreach ($name in $dlls.Keys) {
-        try {
-            Invoke-WebRequest -Uri $dlls[$name] -OutFile (Join-Path $steamDir $name) -ErrorAction SilentlyContinue
-        } catch {}
-    }
-
+ 
     # Extração e Configuração
     Write-Host "Extraindo e aplicando configurações..." -ForegroundColor Cyan
-    $tmp = "$env:TEMP\planogod_dropbox_tmp"
+    $tmp = "$env:TEMP\gameON20_dropbox_tmp"
     if (Test-Path $tmp) { Remove-Item $tmp -Recurse -Force }
     New-Item -ItemType Directory -Path $tmp | Out-Null
 
