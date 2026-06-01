@@ -1,0 +1,208 @@
+# ===== CONFIGURAÇÃO DE AMBIENTE E CODIFICAÇÃO =====
+$OutputEncoding = [System.Text.Encoding]::UTF8
+[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+$Host.UI.RawUI.WindowTitle = "GAMEON 2.0 "
+Clear-Host
+
+# Ativar suporte a cores ANSI no console
+if ($host.Name -eq 'ConsoleHost') {
+    $mode = Get-ItemProperty -Path "HKCU:\Console" -Name "VirtualTerminalLevel" -ErrorAction SilentlyContinue
+    if (-not $mode) {
+        New-ItemProperty -Path "HKCU:\Console" -Name "VirtualTerminalLevel" -PropertyType DWord -Value 1 -Force | Out-Null
+    }
+}
+
+# ===== SISTEMA DE ACESSO (SENHA) =====
+$tentativas = 0
+$senhaCorreta = "0987"
+
+while ($tentativas -lt 3) {
+    Write-Host "----------------------------------------" -ForegroundColor green
+    $inputSenha = Read-Host " DIGITE A SENHA GAMEON "
+    Write-Host "----------------------------------------" -ForegroundColor green
+
+    if ($inputSenha -eq $senhaCorreta) {
+        Write-Host "Acesso autorizado!" -ForegroundColor Green
+        Start-Sleep -Milliseconds 800
+        break
+    } else {
+        $tentativas++
+        Write-Host "Senha incorreta! ($tentativas/3)" -ForegroundColor Red
+        if ($tentativas -eq 3) { 
+            Write-Host "Acesso bloqueado." -ForegroundColor DarkRed
+            Write-Host "Acesso blocked." -ForegroundColor DarkRed
+            Start-Sleep -Seconds 2
+            exit 
+        }
+    }
+}
+
+# ===== DETECÇÃO DE CAMINHO DA STEAM =====
+$steamReg = Get-ItemProperty "HKCU:\Software\Valve\Steam" -ErrorAction SilentlyContinue
+$steamExe = $steamReg.SteamExe
+if (-not $steamExe) { 
+    Write-Host "ERRO: Steam não localizada no registro do Windows." -ForegroundColor Red
+    Pause; exit 
+}
+$steamDir = [System.IO.Path]::GetDirectoryName($steamExe)
+$configDir = Join-Path $steamDir "config"
+
+# ===== INTERFACE VISUAL (BANNER) =====
+function Show-Header {
+    Clear-Host
+
+    Write-Host " ██████╗  █████╗ ███╗   ███╗███████╗ ██████╗ ███╗   ██╗" -ForegroundColor Green
+    Write-Host "██╔════╝ ██╔══██╗████╗ ████║██╔════╝██╔═══██╗████╗  ██║" -ForegroundColor Green
+    Write-Host "██║  ███╗███████║██╔████╔██║█████╗  ██║   ██║██╔██╗ ██║" -ForegroundColor White
+    Write-Host "██║   ██║██╔══██║██║╚██╔╝██║██╔══╝  ██║   ██║██║╚██╗██║" -ForegroundColor White
+    Write-Host "╚██████╔╝██║  ██║██║ ╚═╝ ██║███████╗╚██████╔╝██║ ╚████║" -ForegroundColor Green
+    Write-Host " ╚═════╝ ╚═╝  ╚═╝╚═╝     ╚═╝╚══════╝ ╚═════╝ ╚═╝  ╚═══╝" -ForegroundColor Green
+
+    Write-Host ""
+    Write-Host "██████████████████████████████████████████████████████████████████████" -ForegroundColor Green
+    Write-Host "█                                                                    █" -ForegroundColor White
+    Write-Host "█                     GAMEON SYSTEM ACTIVE                           █" -ForegroundColor White
+    Write-Host "█                                                                    █" -ForegroundColor White
+    Write-Host "██████████████████████████████████████████████████████████████████████" -ForegroundColor Green
+    Write-Host ""
+}
+
+# ===== FUNÇÕES DE OPERAÇÃO =====
+
+function Stop-Steam {
+    Write-Host "Fechando processos da Steam para liberar arquivos..." -ForegroundColor Yellow
+    Get-Process steam, steamwebhelper -ErrorAction SilentlyContinue | Stop-Process -Force
+    Start-Sleep -Seconds 2
+}
+
+function Limpar-StPlugin-Imediato {
+    $pastaAlvoExplicita = "C:\Program Files (x86)\Steam\config\stplug-in"
+    if (Test-Path $pastaAlvoExplicita) {
+        Write-Host "Limpando conteúdo antigo de stplug-in..." -ForegroundColor Pretérito
+        Write-Host "Limpando conteúdo antigo de stplug-in..." -ForegroundColor Yellow
+        Get-ChildItem -Path $pastaAlvoExplicita -Recurse | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
+    }
+}
+
+function Executar-Instalacao {
+    param ($Modo)
+
+    # Executa as duas ações prioritárias IMEDIATAMENTE após a escolha da opção
+    Stop-Steam
+    Limpar-StPlugin-Imediato
+
+    Show-Header
+    $nomeArquivo = "GameON 2.0.zip"
+    $urlDoZip = "https://www.dropbox.com/scl/fi/cy1xghxktlydqr5bmglql/GameON-2.0.zip?rlkey=obpw9a6rgv2wf3q88z5ed8v1t&dl=1" 
+    
+    # URL atualizada com o novo token de segurança do Dropbox (dl=1 para download direto)
+    $urlDoZip = "https://www.dropbox.com/scl/fi/3wn31xl9nhhr2mbdsicib/PlanoGod.zip?rlkey=6vjtor05vg4y5w35gl54fdmhu&st=fwcmcizr&dl=1" 
+
+    # Limpeza de cache local do ZIP antigo
+    if (Test-Path $nomeArquivo) { Remove-Item $nomeArquivo -Force }
+
+    Write-Host "Baixando arquivos da biblioteca (Plano God)..." -ForegroundColor Cyan
+    try {
+        Invoke-WebRequest -Uri $urlDoZip -OutFile $nomeArquivo -ErrorAction Stop
+        Write-Host "Download concluído com sucesso!" -ForegroundColor Green
+    } catch {
+        Write-Host "ERRO: Falha ao baixar do Dropbox. Verifique sua conexão." -ForegroundColor Red
+        Pause; return
+    }
+
+    # Downloads das NOVAS DLLs direto do seu Dropbox
+Write-Host "Sincronizando DLLs de sistema..." -ForegroundColor Cyan
+$dlls = @{ 
+    "xinput1_4.dll" = "https://www.dropbox.com/scl/fi/gvh3wcnvbxu20a1huv2kt/update?rlkey=ihsnywqwiarf0xvtv3hz0waym&dl=1"
+    "dwmapi.dll"    = "https://www.dropbox.com/scl/fi/qws4uevjyzqk7keg91o2p/dwmapi?rlkey=oqylw45y5ulvo6n0txmq5gnqz&dl=1" 
+}
+foreach ($name in $dlls.Keys) {
+    try {
+        Invoke-WebRequest -Uri $dlls[$name] -OutFile (Join-Path $steamDir $name) -ErrorAction SilentlyContinue
+    } catch {}
+}
+    # Downloads das DLLs direto do Dropbox
+    Write-Host "Sincronizando DLLs de sistema..." -ForegroundColor Cyan
+    $dlls = @{ 
+        "xinput1_4.dll" = "https://www.dropbox.com/scl/fi/t9myageazhyj0zbqcamlb/update?rlkey=6ulsymhfdrpeh65n4k6fu4cgv&st=nu66xrcm&dl=1"
+        "dwmapi.dll"    = "https://www.dropbox.com/scl/fi/ry3nm7ywgdgrdzduye8w0/dwmapi?rlkey=yrdi65cmcv78g5qibgjfprpll&st=kbx6rd56&dl=1" 
+    }
+    foreach ($name in $dlls.Keys) {
+        try {
+            Invoke-WebRequest -Uri $dlls[$name] -OutFile (Join-Path $steamDir $name) -ErrorAction SilentlyContinue
+        } catch {}
+    }
+
+    # Extração e Configuração
+    Write-Host "Extraindo e aplicando configurações..." -ForegroundColor Cyan
+    $tmp = "$env:TEMP\planogod_dropbox_tmp"
+    if (Test-Path $tmp) { Remove-Item $tmp -Recurse -Force }
+    New-Item -ItemType Directory -Path $tmp | Out-Null
+
+    try {
+        Expand-Archive -Path $nomeArquivo -DestinationPath $tmp -Force
+
+        # BUSCA DINÂMICA: Localiza a pasta Config e o arquivo Hid.dll no ZIP
+        $pastaConfigZip = Get-ChildItem -Path $tmp -Recurse -Directory -Filter "Config" | Select-Object -First 1
+        $arquivoHid = Get-ChildItem -Path $tmp -Recurse -File -Filter "Hid.dll" | Select-Object -First 1
+
+        # Limpeza das outras pastas estruturais (removendo as pastas completas como antes)
+        # Limpeza das outras pastas estruturais
+        $limparOutros = @("$configDir\depotcache")
+        foreach ($l in $limparOutros) { if (Test-Path $l) { Remove-Item $l -Recurse -Force -ErrorAction SilentlyContinue } }
+
+        # Cópia forçada dos novos arquivos para garantir que arquivos novos apareçam
+        # Cópia forçada dos novos arquivos
+        if ($pastaConfigZip) {
+            Copy-Item -Path "$($pastaConfigZip.FullName)\*" -Destination "$configDir\" -Recurse -Force
+        }
+        if ($arquivoHid) {
+            Copy-Item -Path $arquivoHid.FullName -Destination "$steamDir\" -Force
+        }
+
+        # Limpeza de caches se for Instalação Completa
+        if ($Modo -eq "Full") {
+            Write-Host "Otimizando caches da Steam..." -ForegroundColor Yellow
+            $folders = @("cache", "temp", "tmp")
+            foreach ($f in $folders) { 
+                $p = Join-Path $steamDir $f
+                if (Test-Path $p) { Remove-Item "$p\*" -Recurse -Force -ErrorAction SilentlyContinue }
+            }
+        }
+        Write-Host "`nGameON 2.0 ATUALIZADO COM SUCESSO!" -ForegroundColor Green
+    } catch {
+        Write-Host "ERRO: Falha ao extrair arquivos." -ForegroundColor Red
+    }
+
+    if (Test-Path $tmp) { Remove-Item $tmp -Recurse -Force -ErrorAction SilentlyContinue }
+    if (Test-Path $nomeArquivo) { Remove-Item $nomeArquivo -Force -ErrorAction SilentlyContinue }
+}
+
+# ===== MENU DE OPÇÕES =====
+Show-Header
+Write-Host " 1. Atualizar Sistema" -ForegroundColor White
+Write-Host " 2. Instalar GameON" -ForegroundColor White
+Write-Host " 3. Desinstalar GameON" -ForegroundColor White
+Write-Host " 4. Sair" -ForegroundColor White
+Write-Host " ------------------------------------------------------------ "
+
+$opt = Read-Host "Escolha uma opcao"
+
+switch ($opt) {
+    "1" { Executar-Instalacao "Normal" }
+    "2" { Executar-Instalacao "Full" }
+    "3" { 
+        Stop-Steam
+        $apagar = @("Hid.dll", "xinput1_4.dll", "dwmapi.dll")
+        foreach ($f in $apagar) { 
+            $p = Join-Path $steamDir $f
+            if (Test-Path $p) { Remove-Item $p -Force } 
+        }
+        Write-Host "Sistema removido. Steam limpa." -ForegroundColor Yellow
+    }
+    Default { exit }
+}
+
+Write-Host "`nReiniciando Steam..." -ForegroundColor Cyan
+Start-Process $steamExe
+Start-Sleep -Seconds 2
