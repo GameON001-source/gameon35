@@ -51,16 +51,21 @@ $configDir = Join-Path $steamDir "config"
 function Show-Header {
     Clear-Host
 
-    Write-Host "  ████████████████████████████████████████████████████████████████" -ForegroundColor Green
-    Write-Host "  █                                                          █" -ForegroundColor Green
-    Write-Host "  █                      GAMEON 2.0                          █" -ForegroundColor White
-    Write-Host "  █                                                          █" -ForegroundColor Green
-    Write-Host "  █              PREMIUM GAMING LIBRARY SYSTEM               █" -ForegroundColor White
-    Write-Host "  █                                                          █" -ForegroundColor Green
-    Write-Host "  ████████████████████████████████████████████████████████████████" -ForegroundColor Green
+    Write-Host "   _____          __  __ ______ ____  _   _ " -ForegroundColor Green
+    Write-Host "  / ____|   /\   |  \/  |  ____/ __ \| \ | |" -ForegroundColor Green
+    Write-Host " | |  __   /  \  | \  / | |__ | |  | |  \| |" -ForegroundColor Green
+    Write-Host " | | |_ | / /\ \ | |\/| |  __|| |  | | . ` |" -ForegroundColor White
+    Write-Host " | |__| |/ ____ \| |  | | |___| |__| | |\  |" -ForegroundColor White
+    Write-Host "  \_____/_/    \_\_|  |_|______\____/|_| \_|" -ForegroundColor Green
+
+    Write-Host ""
+    Write-Host "############################################################" -ForegroundColor Green
+    Write-Host "#                                                          #" -ForegroundColor Green
+    Write-Host "#                    GAMEON SYSTEM 2.0                     #" -ForegroundColor White
+    Write-Host "#                                                          #" -ForegroundColor Green
+    Write-Host "############################################################" -ForegroundColor Green
     Write-Host ""
 }
-
 # ===== FUNÇÕES DE OPERAÇÃO =====
 
 function Stop-Steam {
